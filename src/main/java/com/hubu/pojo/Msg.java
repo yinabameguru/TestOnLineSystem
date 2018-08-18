@@ -1,8 +1,12 @@
 package com.hubu.pojo;
 
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
 import java.util.HashMap;
 import java.util.Map;
-
+@Component
+@Scope("prototype")
 public class Msg {
     private int code;
 
@@ -36,20 +40,27 @@ public class Msg {
 
     public  Msg success(){
         Msg result = new Msg();
-        result.code = 100;
-        result.setMsg("处理成功！");
+        result.code = 200;
+        result.setMsg("true");
         return  result;
     }
 
     public Msg fail(){
         Msg result = new Msg();
-        result.code = 200;
-        result.setMsg("处理失败！");
+        result.code = 500;
+        result.setMsg("false");
         return  result;
     }
 
     public Msg add(String key,Object value){
         this.getExtend().put(key,value);
         return this;
+    }
+
+    @Override
+    public String toString() {
+        return "Msg{" +
+                "extend=" + extend +
+                '}';
     }
 }

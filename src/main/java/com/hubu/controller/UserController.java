@@ -1,24 +1,43 @@
 package com.hubu.controller;
 
+import com.github.pagehelper.PageInfo;
+import com.hubu.dto.UserDTO;
 import com.hubu.pojo.Msg;
+import com.hubu.pojo.User;
+import com.hubu.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.List;
+
+
+@Controller
 public class UserController {
+    @Autowired
+    UserService userService;
     /*
      * 输入：用户信息
      * 操作：存储用户信息
      * 输出：操作结果
      * */
-    public Msg addUser(){
-        return  new Msg().success().add("","");
-    }
+//    @RequestMapping(path = "/addUser",method = {RequestMethod.POST})
+//    @ResponseBody
+//    public Msg addUser(User user){
+//        return userService.addUser(user) == 1 ? new Msg().success() : new Msg().fail();
+//    }
 
     /*
-     * 输入：用户Id
+     * 输入：account
      * 操作：删除用户信息
      * 输出：操作结果
      * */
-    public Msg deleteUser(){
-        return  new Msg().success().add("","");
+    @RequestMapping(path = "/deleteUser",method = {RequestMethod.GET})
+    @ResponseBody
+    public Msg deleteUser(String accounts){
+        return userService.deleteUser(accounts) > 0 ? new Msg().success() : new Msg().fail();
     }
 
     /*
@@ -26,17 +45,31 @@ public class UserController {
      * 操作：更新用户信息
      * 输出：操作结果
      * */
-    public Msg updateUser(){
-        return  new Msg().success().add("","");
+    @RequestMapping(path = "/updateUser",method = {RequestMethod.POST})
+    @ResponseBody
+    public Msg updateUser(User user){
+        return userService.updateUser(user) == 1 ? new Msg().success() : new Msg().fail();
     }
 
+
+    @RequestMapping(path = "/getUserByAccounts",method = {RequestMethod.GET})
+    @ResponseBody
+    public Msg getUserByAccounts(String accounts){
+        List<User> users = userService.getUserByAccounts(accounts);
+        return users == null ? new Msg().fail() : new Msg().success().add("result",users);
+    }
+
+
     /*
-     * 输入：页码
-     * 操作：分页查询用户信息
+     * 输入：页码，关键词
+     * 操作：通过关键词分页查询用户信息
      * 输出：用户列表
      * */
-    public Msg getPageUser(int cp){
-        return  new Msg().success().add("","");
+    @RequestMapping(value = "/getPageUserByKeyWord",method = {RequestMethod.GET})
+    @ResponseBody
+    public Msg getPageUserByKeyWord(int currentPage,String keyword){
+        PageInfo<User> pageClass = userService.getPageUserByKeyWord(currentPage,keyword);
+        return pageClass == null ? new Msg().fail() : new Msg().success().add("result",pageClass);
     }
 
     /*
@@ -44,7 +77,26 @@ public class UserController {
      * 操作：通过关键词分页查询用户信息
      * 输出：用户列表
      * */
-    public Msg getPageUserByKeyWord(int cp , String keyword){
-        return  new Msg().success().add("","");
+    @RequestMapping(value = "/getPageUser",method = {RequestMethod.GET})
+    @ResponseBody
+    public Msg getPageUser(int currentPage){
+        PageInfo<User> pageClass = userService.getPageUser(currentPage);
+        return pageClass == null ? new Msg().fail() : new Msg().success().add("result",pageClass);
     }
+
+
+    @RequestMapping(path = "/getUserByAccount",method = {RequestMethod.GET})
+    @ResponseBody
+    public Msg getUserByAccount(String account){
+        User user = userService.getUserByUserId(account);
+        return user == null ? new Msg().fail() : new Msg().success().add("result",user);
+    }
+
+    @RequestMapping(path = "/getUserByClassId",method = {RequestMethod.GET})
+    @ResponseBody
+    public Msg getUserByClassId(Integer classId,Integer currentPage){
+        PageInfo<User> users = userService.getUserByClassId(classId,currentPage);
+        return users == null ? new Msg().fail() : new Msg().success().add("result",users);
+    }
+
 }
